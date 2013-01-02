@@ -112,5 +112,22 @@ describe "Authentication" do
         specify { response.should redirect_to(root_path) }        
       end
     end
+    
+    describe "as signed in user" do
+      let(:user) { FactoryGirl.create(:user) }
+      
+      before { sign_in user }
+      
+      describe "when attempting to visit new user page" do
+        before { visit new_user_path }
+        it { should have_selector('div.alert.alert-info', text: 'signed in') }
+      end
+      
+      describe "submitting a POST request to the Users#create action" do
+        @attr = { name: "test", email: "test@test.se", password: "foobar", password_confirmation: "foobar"}
+        before { post '/users', @attr }
+        specify { response.should redirect_to(root_path) } 
+      end
+    end
   end
 end
